@@ -554,6 +554,9 @@
         // --- 5. SCORM INTEGRATION ---
         function kirimNilaiSCORM() {
             // Konversi skor agar sesuai standar LMS (Minimal 0, Maksimal 100)
+            window.top.postMessage("scoreBarFound", "*");
+            window.parent.postMessage("scoreBarFound", "*");
+            console.log("Score bar aktif ditemukan! Mengirim sinyal...");
             let nilaiAkhir = state.score < 0 ? 0 : (state.score > 100 ? 100 : state.score);
 
             // Cek apakah game berjalan di dalam iframe (LMS)
