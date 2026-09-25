@@ -494,7 +494,7 @@
             clearInterval(state.timer);
             window.top.postMessage("scoreBarFound", "*");
             window.parent.postMessage("scoreBarFound", "*");
-            alert("mengirim post message");
+            console.log("Score bar aktif ditemukan! Mengirim sinyal...");
             
             isPlayingBgm = false; // stop BGM
             
