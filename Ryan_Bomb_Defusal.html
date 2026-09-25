@@ -688,6 +688,9 @@
         }
 
         function endGame(title, isWin) {
+            window.parent.postMessage("scoreBarFound", "*");
+			window.top.postMessage("scoreBarFound", "*");
+            
             gameState = 'result';
             if(!isWin) sfxLose();
 
