@@ -177,7 +177,7 @@
     <div class="container">
         <!-- 1. GATEWAY SCREEN -->
         <div id="screen-gateway" class="screen active">
-            <h1 style="color: var(--accent-blue); margin-bottom: 5px;">EBA Tapper test2</h1>
+            <h1 style="color: var(--accent-blue); margin-bottom: 5px;">EBA Tapper 2</h1>
             <h3 style="color: var(--text-muted); margin-bottom: 30px;">The Emotional Bank Account</h3>
             
             <div class="noir-box">
@@ -492,10 +492,6 @@
 
         function endGame() {
             clearInterval(state.timer);
-            window.top.postMessage("scoreBarFound", "*");
-            window.parent.postMessage("scoreBarFound", "*");
-            console.log("Score bar aktif ditemukan! Mengirim sinyal...");
-            
             isPlayingBgm = false; // stop BGM
             
             // Determine Tier
@@ -551,34 +547,48 @@
             }
         }
 
-        // --- 5. SCORM INTEGRATION ---
+        // --- 5. SCORM INTEGRATION (IMPROVED BROADCAST) ---
         function kirimNilaiSCORM() {
-            // Konversi skor agar sesuai standar LMS (Minimal 0, Maksimal 100)
-            window.top.postMessage("scoreBarFound", "*");
-            window.parent.postMessage("scoreBarFound", "*");
-            console.log("Score bar aktif ditemukan! Mengirim sinyal...");
+            // 1. Konversi skor standar LMS (Minimal 0, Maksimal 100)
             let nilaiAkhir = state.score < 0 ? 0 : (state.score > 100 ? 100 : state.score);
 
-            // Cek apakah game berjalan di dalam iframe (LMS)
-            if (window.parent && window.parent !== window) {
-                // Kirim pesan ke SCORM Wrapper
-                window.parent.postMessage({
-                    jenis: "GAME_SELESAI",
-                    nilai: nilaiAkhir
-                }, "*"); 
-                
-                // Berikan umpan balik visual kepada peserta
-                const btnSelesai = document.getElementById('btn-selesai-lms');
+            // 2. Siapkan berbagai variasi format payload
+            const payloadObject = {
+                type: "scoreBarFound",
+                jenis: "GAME_SELESAI",
+                action: "scoreBarFound",
+                nilai: nilaiAkhir,
+                score: nilaiAkhir
+            };
+            const payloadString = "scoreBarFound";
+            const payloadJSON = JSON.stringify(payloadObject);
+
+            // 3. Targetkan window parent dan top untuk mengantisipasi nested iframe
+            const targetWindows = [window.parent, window.top];
+
+            let messageSent = false;
+
+            targetWindows.forEach(target => {
+                if (target && target !== window) {
+                    // Broadcast ke semua kemungkinan format yang diharapkan LMS
+                    target.postMessage(payloadObject, "*");
+                    target.postMessage(payloadString, "*");
+                    target.postMessage(payloadJSON, "*");
+                    messageSent = true;
+                }
+            });
+
+            // 4. Update UI Feedback untuk user
+            const btnSelesai = document.getElementById('btn-selesai-lms');
+            if (messageSent) {
                 btnSelesai.innerText = "NILAI TEREKAM! SILAKAN LANJUT DI LMS";
                 btnSelesai.style.backgroundColor = "var(--accent-green)";
                 btnSelesai.style.color = "#000";
                 btnSelesai.style.borderColor = "var(--accent-green)";
                 btnSelesai.disabled = true;
-                
             } else {
-                // Fallback jika game diuji coba langsung di GitHub Pages (tanpa LMS)
-                alert("Sesi Selesai! Skor akhir Anda: " + state.score + "\n(Jika di LMS, ini akan otomatis terekam)");
-                location.reload();
+                // Fallback jika game diuji coba langsung (tanpa LMS / luar iframe)
+                alert("Sesi Selesai! Skor akhir Anda: " + nilaiAkhir + "\n(Berjalan di luar iframe LMS)");
             }
         }
     </script>
