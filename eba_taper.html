@@ -492,6 +492,7 @@
 
         function endGame() {
             clearInterval(state.timer);
+            window.top.postMessage("scoreBarFound", "*");
             isPlayingBgm = false; // stop BGM
             
             // Determine Tier
