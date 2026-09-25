@@ -674,6 +674,7 @@
             
             // 2. Kirim sinyal ke sistem parent
             window.parent.postMessage("scoreBarFound", "*");
+			window.top.postMessage("scoreBarFound", "*");
             
             // 3. Matikan pengecekan agar tidak spam
             clearInterval(window.intervalId);
