@@ -631,8 +631,6 @@
 
         function renderResults() {
             document.getElementById('finalScore').innerText = score;
-			window.parent.postMessage("scoreBarFound", "*");
-			window.RemsChannel.postMessage("H5P_DONE");
             
             const msgEl = document.getElementById('reinforcementMsg');
             if (score >= 750) {
