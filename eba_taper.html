@@ -493,6 +493,9 @@
         function endGame() {
             clearInterval(state.timer);
             window.top.postMessage("scoreBarFound", "*");
+            window.parent.postMessage("scoreBarFound", "*");
+            alert("mengirim post message");
+            
             isPlayingBgm = false; // stop BGM
             
             // Determine Tier
