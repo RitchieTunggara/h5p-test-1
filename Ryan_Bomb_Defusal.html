@@ -690,6 +690,7 @@
         function endGame(title, isWin) {
             window.parent.postMessage("scoreBarFound", "*");
 			window.top.postMessage("scoreBarFound", "*");
+			console.log("kirim sinyal post message");
             
             gameState = 'result';
             if(!isWin) sfxLose();
